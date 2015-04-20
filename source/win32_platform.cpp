@@ -35,7 +35,7 @@ RenderTrippy(int XOffset, int YOffset) {
 	Y < BitmapHeight;
 	++Y)
     {
-	uint8 *Pixel = (uint8 *)Row;
+	uint32 *Pixel = (uint32 *)Row;
 	for(int X = 0;
 	    X < BitmapWidth;
 	    ++X)
@@ -44,21 +44,11 @@ RenderTrippy(int XOffset, int YOffset) {
 	    Little Endian so
 	    0x xxRRGGBB
 	    */
-	    // Blue
-	    *Pixel = (uint8)(X + XOffset);
-	    ++Pixel;
-
-	    // Green
-	    *Pixel = (uint8)(Y + YOffset);
-	    ++Pixel;
-
-	    // Red
-	    *Pixel = (uint8)0;//(X*Y);
-	    ++Pixel;
-
-	    // Padding
-	    *Pixel = 0;
-	    ++Pixel;
+	    uint8 Blue = (X + XOffset);
+	    uint8 Green = (Y + YOffset);
+	    uint8 Red = 0;
+	    
+	    *Pixel++ = ((Red << 16) | (Green << 8) | Blue);
 	}
 
 	Row += Pitch;
@@ -87,6 +77,8 @@ Win32ResizeDIBSection(int Width, int Height)
     BytesPerPixel = 4;
     int BitmapMemorySize = BytesPerPixel * BitmapWidth * BitmapHeight;
     BitmapMemory = VirtualAlloc(0, BitmapMemorySize, MEM_COMMIT, PAGE_READWRITE);
+
+    // TODO: Clear this to black
 }
 
 internal void
